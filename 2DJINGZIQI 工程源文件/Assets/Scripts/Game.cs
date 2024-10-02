@@ -40,7 +40,7 @@ public class Game : MonoBehaviour
         {
             board[row, col] = currentPlayer;
 
-            button.image.sprite = SP[0];
+            button.image.sprite = SP[1];
 
             //Debug.Log(currentPlayer);
 
@@ -66,7 +66,49 @@ public class Game : MonoBehaviour
 
     void MakeComputerMove()
     {
-     
+        //优先让自己获胜
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (board[i, j] == null)
+                {
+                    board[i, j] = currentPlayer; 
+                    if (CheckForWin(currentPlayer))
+                    {
+                        buttons[i * 3 + j].image.sprite = SP[0];
+                        DisableButtons();
+                        resultText.text = currentPlayer + " win!";
+                        return;
+                    }
+                    board[i, j] = null; 
+                }
+            }
+        }
+
+        // 阻止对手获胜
+        string opponent = currentPlayer == "X" ? "O" : "X";
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (board[i, j] == null)
+                {
+                    //Debug.Log(board[i, j]);
+                    board[i, j] = opponent; 
+                    if (CheckForWin(opponent))
+                    {
+                        board[i, j] = currentPlayer; // 放置当前玩家的棋子
+                        buttons[i * 3 + j].image.sprite = SP[0];
+                        currentPlayer = "X"; // 切换回玩家
+                        return;
+                    }
+                    board[i, j] = null;
+                }
+            }
+        }
+
+        //随机选择一个空位
         for (int i = 0; i < 3; i++)
         {
             for (int j = 0; j < 3; j++)
@@ -74,7 +116,7 @@ public class Game : MonoBehaviour
                 if (board[i, j] == null)
                 {
                     board[i, j] = currentPlayer;
-                    buttons[i * 3 + j].image.sprite = SP[1];
+                    buttons[i * 3 + j].image.sprite = SP[0];
 
                     if (CheckForWin(currentPlayer))
                     {
